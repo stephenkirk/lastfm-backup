@@ -49,7 +49,6 @@ def merge_scrobbles(directory):
                 if key not in all_plays:
                     all_plays[key] = simplify_play(play)
 
-    # Convert back to a list
     merged_plays = list(all_plays.values())
 
     return merged_plays
