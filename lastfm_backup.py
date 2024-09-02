@@ -55,48 +55,18 @@ def get_now_scrobbling(username, api_key):
         return False
 
 
-def scrobbling_export(tracks, username, export_format="dump"):
-    """ Save scrobbled track via various format """
+def scrobbling_export(tracks, username, export_format="dump", start_from_page=1):
+    import os
+
+    # Create scrobbles directory if it doesn't exist
+    scrobbles_dir = "./scrobbles"
+    os.makedirs(scrobbles_dir, exist_ok=True)
 
     if export_format == "dump":
-        with open("%s.json" % (username), "w", encoding="utf-8") as f:
+        filename = os.path.join(scrobbles_dir, f"{username}_{start_from_page}.json")
+        with open(filename, "w", encoding="utf-8") as f:
             data = json.dumps(tracks, indent=4, sort_keys=True, ensure_ascii=False)
             f.write(data)
-
-    elif export_format == "simple":
-        _ = []
-
-        for track in tracks:
-            _.append(
-                {
-                    "artist": track["artist"]["#text"],
-                    "name": track["name"],
-                    "album": track["album"]["#text"],
-                    "date": int(track["date"]["uts"]),
-                }
-            )
-
-        with open("%s.json" % (username), "w", encoding="utf-8") as f:
-            data = json.dumps(_, indent=4, sort_keys=True, ensure_ascii=False)
-            f.write(data)
-
-    elif export_format == "csv":
-        _ = []
-
-        for track in tracks:
-            _.append(
-                [
-                    track["artist"]["#text"],
-                    track["name"],
-                    track["album"]["#text"],
-                    int(track["date"]["uts"]),
-                ]
-            )
-
-        with open("%s.csv" % (username), "w", encoding="utf-8", newline="") as f:
-            data = csv.writer(f, quoting=csv.QUOTE_NONNUMERIC, delimiter=",")
-            data.writerow(["artist", "track", "album", "date"])
-            data.writerows(_)
 
     return 1
 
@@ -112,8 +82,10 @@ if __name__ == "__main__":
         _["username"] = input("Username: ")
     api_key, username = _["api_key"], _["username"]
 
+    start_from_page = _.get("start_from_page", 1)
+    current_page = start_from_page
+
     total_pages = get_pages(username, api_key)
-    current_page = 1
     scrobbled = []
 
     while current_page <= total_pages:
@@ -129,10 +101,14 @@ if __name__ == "__main__":
         for track in response:
             scrobbled.append(track)
 
+        if current_page % 10 == 0:
+            if scrobbling_export(scrobbled, username, _["export_format"], start_from_page):
+                print("\n{0} tracks saved!".format(len(scrobbled), username))
+
         current_page += 1
 
     # if get_now_scrobbling(username, api_key):
     #     scrobbled.pop(0)
 
-    if scrobbling_export(scrobbled, username, _["export_format"]):
+    if scrobbling_export(scrobbled, username, _["export_format"], start_from_page):
         print("\n{0} tracks saved!".format(len(scrobbled), username))
