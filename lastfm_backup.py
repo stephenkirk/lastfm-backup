@@ -5,11 +5,6 @@ import csv
 import os.path
 import requests
 
-__author__ = "Alexander Popov"
-__version__ = "2.1.0"
-__license__ = "Unlicense"
-
-
 def get_pages(username, api_key, limit=200):
     """ Getting the number of pages with scrobbling data """
 

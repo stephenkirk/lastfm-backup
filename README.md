@@ -2,10 +2,8 @@
 
 ### Features:
 * Simple
-* Three formats for export data:
+* One format for export data:
     1. `dump` - JSON, direct from API
-    2. `simple` - Artist, track name, album & date as JSON
-    3. `csv` - Artist, track name, album & date as comma separated values
 
 ### How to use:
 * Stop scrobbling!
