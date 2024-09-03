@@ -50,18 +50,17 @@ def get_now_scrobbling(username, api_key):
         return False
 
 
-def scrobbling_export(tracks, username, export_format="dump", start_from_page=1):
+def scrobbling_export(tracks, username, start_from_page=1):
     import os
 
     # Create scrobbles directory if it doesn't exist
     scrobbles_dir = "./scrobbles"
     os.makedirs(scrobbles_dir, exist_ok=True)
 
-    if export_format == "dump":
-        filename = os.path.join(scrobbles_dir, f"{username}_{start_from_page}.json")
-        with open(filename, "w", encoding="utf-8") as f:
-            data = json.dumps(tracks, indent=4, sort_keys=True, ensure_ascii=False)
-            f.write(data)
+    filename = os.path.join(scrobbles_dir, f"{username}_{start_from_page}.json")
+    with open(filename, "w", encoding="utf-8") as f:
+        data = json.dumps(tracks, indent=4, sort_keys=True, ensure_ascii=False)
+        f.write(data)
 
     return 1
 
@@ -97,13 +96,10 @@ if __name__ == "__main__":
             scrobbled.append(track)
 
         if current_page % 10 == 0:
-            if scrobbling_export(scrobbled, username, _["export_format"], start_from_page):
+            if scrobbling_export(scrobbled, username, start_from_page):
                 print("\n{0} tracks saved!".format(len(scrobbled), username))
 
         current_page += 1
 
-    # if get_now_scrobbling(username, api_key):
-    #     scrobbled.pop(0)
-
-    if scrobbling_export(scrobbled, username, _["export_format"], start_from_page):
+    if scrobbling_export(scrobbled, username, start_from_page):
         print("\n{0} tracks saved!".format(len(scrobbled), username))
