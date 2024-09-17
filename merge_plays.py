@@ -29,8 +29,7 @@ def simplify_play(play):
         "album": play['album']['#text'],
         "artist": play['artist']['#text'],
         "name": play['name'],
-        "date_text": play['date']['#text'],
-        "date_uts": play['date']['uts']
+        "date": play['date']['uts']
     }
 
 def merge_scrobbles(directory):
